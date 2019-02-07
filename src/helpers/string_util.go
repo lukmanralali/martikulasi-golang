@@ -27,7 +27,7 @@ func BuildRandomString(n int) string {
     return string(b)
 }
 
-func validatorUrlShort(data string) bool {
+func ValidatorShortCode(data string) bool {
 	validString := regexp.MustCompile(`^[0-9a-zA-Z_]{6}$`)
 	return validString.MatchString(data)
 }
