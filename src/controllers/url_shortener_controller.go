@@ -1,4 +1,4 @@
-package controller
+package controllers
 
 import (
 	"../constants"
@@ -6,38 +6,30 @@ import (
 	"../helpers"
 	"../objects"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"net/http"
+	"fmt"
 )
 
 type UrlShrotenerController struct {
-	urlShortenerService services.UrlShortenerService
-	errorHelper helpers.ErrorHelper
 }
 
 func UrlShrotenerControllerHandler(router *gin.Engine) {
-	handler := &UrlShrotenerController{
-		urlShortenerService: services.UrlShortenerServiceHandler(),
-		errorHelper: helpers.ErrorHelperHandler(),
-	}
 	group := router.Group("shorten")
 	// test url
 	// group.GET("/1", handler.GetById)
 	// real url
-	group.POST("", handler.ShortUrl)
+	group.POST("", shortUrl)
 
 }
 
-func (handler *UrlShrotenerController) ShortUrl(context *gin.Context) {
-
-	if err := context.ShouldBindWith(&objects.URLRequestShortRequest, binding.Query); err != nil {
-		handler.errorHelper.HTTPResponseError(context, err, constants.RequestParameterInvalid)
+func shortUrl(context *gin.Context) {
+	reqData := objects.URLRequestShortRequest{}
+	if err := context.ShouldBindJSON(&reqData); err != nil {
+		fmt.Println("not valid data")
+		helpers.HTTPResponseError2(context, err, constants.RequestParameterInvalid)
+		return
 	}
-
-	var reqData URLRequestShortRequest
-    context.BindJSON(&reqData)
-
-	result, err := handler.urlShortenerService.MakeShortUrl(reqData.RealUrl)
+	fmt.Println("Validation Success!!")
+	result := services.MakeShortUrl(reqData)
 	context.JSON(http.StatusOK, result)
-
 }

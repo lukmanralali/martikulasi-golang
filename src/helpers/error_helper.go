@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-sql-driver/mysql"
 	"github.com/rollbar/rollbar-go"
+	"fmt"
 )
 
 type ErrorHelper struct {
@@ -22,6 +23,28 @@ func (handler *ErrorHelper) HTTPResponseError(context *gin.Context, e error, def
 		break
 	}
 
+	errorConstant := constants.GetErrorConstant(defaultErrorCode)
+	context.JSON(errorConstant.HttpCode, gin.H{
+		"code":    defaultErrorCode,
+		"message": errorConstant.Message,
+	})
+
+	if _, ok := e.(*mysql.MySQLError); !ok {
+		rollbar.Error(e)
+	}
+
+	panic(e)
+
+}
+
+func HTTPResponseError2(context *gin.Context, e error, defaultErrorCode int) {
+
+	switch e.Error() {
+	case "record not found":
+		defaultErrorCode = constants.ResourceNotFound
+		break
+	}
+	fmt.Println(defaultErrorCode)
 	errorConstant := constants.GetErrorConstant(defaultErrorCode)
 	context.JSON(errorConstant.HttpCode, gin.H{
 		"code":    defaultErrorCode,

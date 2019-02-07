@@ -1,9 +1,9 @@
 package objects
 
 type URLRequestShortRequest struct {
-	RealUrl  string `json:"url"`
+	Url string `json:"url" binding:"required"`
 }
 
 type URLRequestShortResponse struct {
-	ShortedUrl  string `json:"shortcode"`
+	ShortedUrl string `json:"shortcode"`
 }
