@@ -2,6 +2,8 @@ package main
 
 import (
 	"./controllers"
+	"./controllers/v1"
+	"./controllers/v2"
 	"./database"
 	"./middleware"
 	"fmt"
@@ -20,7 +22,11 @@ func init() {
 }
 
 func main() {
-
+	if err := run(); err != nil {
+        fmt.Fprintf(os.Stderr, "error: %v\n", err)
+        // os.Exit(1)
+    }
+	
 	if os.Getenv("APP_ENV") == "production" {
 		rollbar.SetToken(os.Getenv("ROLLBAR_TOKEN"))
 		rollbar.SetEnvironment(os.Getenv("APP_ENV"))
@@ -38,9 +44,10 @@ func startApp() {
 	router := gin.Default()
 	router.Use(defaultMiddleware.CORSMiddleware())
 
-	controllers.V1UserControllerHandler(router)
-	controllers.V1AuthenticationControllerHandler(router)
-	controllers.V2UserControllerHandler(router)
+	v1.V1UserControllerHandler(router)
+	v1.V1AuthenticationControllerHandler(router)
+	v2.V2UserControllerHandler(router)
+	controllers.UrlShrotenerControllerHandler(router)
 
 	serverHost := os.Getenv("SERVER_ADDRESS")
 	serverPort := os.Getenv("SERVER_PORT")
