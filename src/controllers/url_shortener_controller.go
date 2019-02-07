@@ -1,8 +1,13 @@
 package controller
 
 import (
-	"../objects"
+	"../constants"
 	"../services"
+	"../helpers"
+	"../objects"
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"net/http"
 )
 
 type UrlShrotenerController struct {
@@ -11,8 +16,7 @@ type UrlShrotenerController struct {
 }
 
 func UrlShrotenerControllerHandler(router *gin.Engine) {
-
-	handler := &V1UserController{
+	handler := &UrlShrotenerController{
 		urlShortenerService: services.UrlShortenerServiceHandler(),
 		errorHelper: helpers.ErrorHelperHandler(),
 	}
@@ -20,6 +24,20 @@ func UrlShrotenerControllerHandler(router *gin.Engine) {
 	// test url
 	// group.GET("/1", handler.GetById)
 	// real url
-	group.POST("", handler.makeShortUrl)
+	group.POST("", handler.ShortUrl)
+
+}
+
+func (handler *UrlShrotenerController) ShortUrl(context *gin.Context) {
+
+	if err := context.ShouldBindWith(&objects.URLRequestShortRequest, binding.Query); err != nil {
+		handler.errorHelper.HTTPResponseError(context, err, constants.RequestParameterInvalid)
+	}
+
+	var reqData URLRequestShortRequest
+    context.BindJSON(&reqData)
+
+	result, err := handler.urlShortenerService.MakeShortUrl(reqData.RealUrl)
+	context.JSON(http.StatusOK, result)
 
 }

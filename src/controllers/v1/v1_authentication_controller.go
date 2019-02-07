@@ -5,13 +5,13 @@ import (
 	"../../helpers"
 	"../../middleware"
 	"../../objects"
-	"../../services"
+	"../../services/v1"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type V1AuthenticationController struct {
-	service     services.v1.V1AuthenticationService
+	service     v1.V1AuthenticationService
 	errorHelper helpers.ErrorHelper
 }
 
@@ -19,7 +19,7 @@ func V1AuthenticationControllerHandler(router *gin.Engine) {
 
 	handler := &V1AuthenticationController{
 		errorHelper: helpers.ErrorHelperHandler(),
-		service:     services.v1.V1AuthenticationServiceHandler(),
+		service:     v1.V1AuthenticationServiceHandler(),
 	}
 
 	group := router.Group("v1/authentication")

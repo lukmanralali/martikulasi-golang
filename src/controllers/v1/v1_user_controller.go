@@ -5,21 +5,21 @@ import (
 	"../../helpers"
 	"../../middleware"
 	"../../objects"
-	"../../services"
+	"../../services/v1"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 )
 
 type V1UserController struct {
-	userService services.v1.V1UserService
+	userService v1.V1UserService
 	errorHelper helpers.ErrorHelper
 }
 
 func V1UserControllerHandler(router *gin.Engine) {
 
 	handler := &V1UserController{
-		userService: services.v1.V1UserServiceHandler(),
+		userService: v1.V1UserServiceHandler(),
 		errorHelper: helpers.ErrorHelperHandler(),
 	}
 

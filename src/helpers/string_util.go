@@ -1,4 +1,4 @@
-package helper
+package helpers
 
 import (
 	// "fmt"
@@ -7,19 +7,12 @@ import (
 	"net/url"
 )
 
-type StringUtil struct {
-}
-
-func (handler *StringUtil) StringUtilHandler() (StringUtil) {
-	return StringUtil{}
-}
-
-func urlValidator(urldata string) string {
-	err := url.ParseRequestURI(urldata)
-	if err != nill {
-		return nil
-	}
-	return url
+func UrlValidator(urldata string) bool {
+    _, err := url.ParseRequestURI(urldata)
+    if err != nil {
+        return false
+    }
+    return true
 }
 
 // regex matcher = ^[0-9a-zA-Z_]{6}$

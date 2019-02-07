@@ -1,21 +1,24 @@
 package services
-import "../helpers"
+import (
+	"../helpers"
+	"../objects"
+)
 
 type UrlShortenerService struct {
-	stringUtil helpers.StringUtil
+	// stringUtil helpers.StringUtil
 }
 
 func UrlShortenerServiceHandler() (UrlShortenerService) {
 	return UrlShortenerService{}
 }
 
-func (service *UrlShortenerService) makeShortUrl(requestData object.URLRequestShortRequest) (object.URLRequestShortResponse, error){
-	validUrl := stringUtil.urlValidator(requestData.RealUrl)
-	if nil == validUrl {
-		return objects.URLRequestShortRequest{}, err
-	}
-	shortCode := stringUtil.BuildRandomString(6)
-	result := object.URLRequestShortResponse{}
+func (service *UrlShortenerService) MakeShortUrl(requestData objects.URLRequestShortRequest) (objects.URLRequestShortResponse, error){
+	// validUrl := helpers.UrlValidator(requestData.RealUrl)
+	// if false == validUrl {
+	// 	return objects.URLRequestShortRequest{}, error
+	// }
+	shortCode := helpers.BuildRandomString(6)
+	result := objects.URLRequestShortResponse{}
 	result.ShortedUrl = shortCode
 	return result, nil
 }

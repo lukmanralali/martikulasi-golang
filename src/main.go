@@ -22,11 +22,6 @@ func init() {
 }
 
 func main() {
-	if err := run(); err != nil {
-        fmt.Fprintf(os.Stderr, "error: %v\n", err)
-        // os.Exit(1)
-    }
-	
 	if os.Getenv("APP_ENV") == "production" {
 		rollbar.SetToken(os.Getenv("ROLLBAR_TOKEN"))
 		rollbar.SetEnvironment(os.Getenv("APP_ENV"))
