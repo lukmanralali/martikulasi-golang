@@ -2,18 +2,18 @@ package v1
 
 import (
 	"../../objects"
-	"../../repositories"
+	"../../repositories/v1"
 	"github.com/jinzhu/copier"
 )
 
 type V1UserService struct {
 	request        objects.V1UserObjectResponse
-	userRepository repositories.V1UserRepository
+	userRepository v1.V1UserRepository
 }
 
 func V1UserServiceHandler() (V1UserService) {
 	service := V1UserService{
-		userRepository: repositories.V1UserRepositoryHandler(),
+		userRepository: v1.V1UserRepositoryHandler(),
 	}
 	return service
 }

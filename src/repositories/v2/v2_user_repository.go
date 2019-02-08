@@ -1,8 +1,8 @@
-package repositories
+package v2
 
 import (
-	"../database"
-	"../models"
+	"../../database"
+	"../../models"
 	"github.com/jinzhu/copier"
 	"github.com/jinzhu/gorm"
 )
