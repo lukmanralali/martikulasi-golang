@@ -7,7 +7,10 @@ import (
 	"time"
 )
 
-func CreateShortcode(requestData objects.URLRequestShortRequest) {
+type UrlShortRepository struct {
+}
+
+func (repository *UrlShortRepository) CreateShortcode(requestData objects.URLRequestShortRequest) {
 	now := time.Now()
 	urlShortCode := models.UrlShortCode{
 		Uri: requestData.Url,
@@ -19,14 +22,14 @@ func CreateShortcode(requestData objects.URLRequestShortRequest) {
 	db.Create(&urlShortCode)
 }
 
-func GetByShortcode(shortcode string) (models.UrlShortCode) {
+func (repository *UrlShortRepository) GetByShortcode(shortcode string) (models.UrlShortCode) {
 	urlShortCode := models.UrlShortCode{}
 	db := database.GetConnection()
 	db.Where(&models.UrlShortCode{Shortcode: shortcode}).First(&urlShortCode)
 	return urlShortCode
 }
 
-func UpdateShortcodeData(urlShortCode models.UrlShortCode) {
+func (repository *UrlShortRepository) UpdateShortcodeData(urlShortCode models.UrlShortCode) {
 	urlShortCodeModel := models.UrlShortCode{}
 	db := database.GetConnection()
 	db.Model(&urlShortCodeModel).Where("shortcode = ?", urlShortCode.Shortcode).Update(urlShortCode)

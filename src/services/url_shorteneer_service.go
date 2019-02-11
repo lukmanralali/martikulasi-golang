@@ -7,10 +7,14 @@ import (
 	"time"
 )
 
-func MakeShortUrl(requestData objects.URLRequestShortRequest) (objects.URLRequestShortResponse){
+type UrlShortService struct {
+	urlShortRepository repositories.UrlShortRepository
+}
+
+func  (service *UrlShortService) MakeShortUrl(requestData objects.URLRequestShortRequest) (objects.URLRequestShortResponse){
 	shortCode := helpers.BuildRandomString(6)
 	if requestData.ShortCode != ""{
-		shortcodeDB := repositories.GetByShortcode(requestData.ShortCode)
+		shortcodeDB := service.urlShortRepository.GetByShortcode(requestData.ShortCode)
 		if "" != shortcodeDB.Shortcode {
 			shortCode = "Already in Used"
 		}
@@ -20,21 +24,21 @@ func MakeShortUrl(requestData objects.URLRequestShortRequest) (objects.URLReques
 	
 	requestData.ShortCode = shortCode
 	if shortCode != "Already in Used" {
-		repositories.CreateShortcode(requestData)
+		service.urlShortRepository.CreateShortcode(requestData)
 	}
 	return result
 }
 
-func GetUrlShortUrl(shortCode string) (models.UrlShortCode){
-	shortCodeDB := repositories.GetByShortcode(shortCode)
+func (service *UrlShortService) GetUrlShortUrl(shortCode string) (models.UrlShortCode){
+	shortCodeDB := service.urlShortRepository.GetByShortcode(shortCode)
 	shortCodeDB.LastUsedAt = time.Now()
 	shortCodeDB.Counter++
-	repositories.UpdateShortcodeData(shortCodeDB)
+	service.urlShortRepository.UpdateShortcodeData(shortCodeDB)
 	return shortCodeDB
 }
 
-func GetUrlShortUrlStat(shortCode string) (objects.ShortedUrlStatResponse){
-	shortcodeDB := repositories.GetByShortcode(shortCode)
+func (service *UrlShortService) GetUrlShortUrlStat(shortCode string) (objects.ShortedUrlStatResponse){
+	shortcodeDB := service.urlShortRepository.GetByShortcode(shortCode)
 	if "" == shortcodeDB.Shortcode {
 		return objects.ShortedUrlStatResponse{}
 	}

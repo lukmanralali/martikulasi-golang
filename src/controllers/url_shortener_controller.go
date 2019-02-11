@@ -10,17 +10,21 @@ import (
 	"fmt"
 )
 
+type UrlShrotenerController struct {
+	urlShortService services.UrlShortService
+}
+
 func UrlShrotenerControllerHandler(router *gin.Engine) {
 	// router.GET(":shortcode", getUrlShortcode)
-
+	this := &UrlShrotenerController{}
 	group := router.Group("shorten")
-	group.POST("", shortUrl)
-	group.GET(":shortcode", getUrlShortcode)
-	group.GET(":shortcode/stats", getUrlShortcodeStat)
+	group.POST("", this.ShortUrl)
+	group.GET(":shortcode", this.getUrlShortcode)
+	group.GET(":shortcode/stats", this.getUrlShortcodeStat)
 
 }
 
-func shortUrl(context *gin.Context) {
+func (controller *UrlShrotenerController) ShortUrl(context *gin.Context) {
 	reqData := objects.URLRequestShortRequest{}
 	
 	// validate payload
@@ -43,7 +47,7 @@ func shortUrl(context *gin.Context) {
 	}
 	fmt.Println("Validation Success!!")
 	
-	result := services.MakeShortUrl(reqData)
+	result := controller.urlShortService.MakeShortUrl(reqData)
 	if result.ShortCode == "Already in Used" {
 		context.JSON(http.StatusConflict, result)
 		return
@@ -51,7 +55,7 @@ func shortUrl(context *gin.Context) {
 	context.JSON(http.StatusOK, result)
 }
 
-func getUrlShortcode(context *gin.Context) {
+func (controller *UrlShrotenerController) getUrlShortcode(context *gin.Context) {
 	reqData := context.Param("shortcode")
 	fmt.Println(reqData)
 	if "" == reqData {
@@ -59,12 +63,12 @@ func getUrlShortcode(context *gin.Context) {
 		return
 	}
 	fmt.Println("Validation Success!!")
-	result := services.GetUrlShortUrl(reqData)
+	result := controller.urlShortService.GetUrlShortUrl(reqData)
 	context.Header("Location", result.Uri)
 	context.JSON(http.StatusFound, result)
 }
 
-func getUrlShortcodeStat(context *gin.Context) {
+func (controller *UrlShrotenerController) getUrlShortcodeStat(context *gin.Context) {
 	reqData := context.Param("shortcode")
 	fmt.Println(reqData)
 	if "" == reqData {
@@ -72,7 +76,7 @@ func getUrlShortcodeStat(context *gin.Context) {
 		return
 	}
 	fmt.Println("Validation Success!!")
-	result := services.GetUrlShortUrlStat(reqData)
+	result := controller.urlShortService.GetUrlShortUrlStat(reqData)
 	
 	context.JSON(http.StatusFound, result)
 }
