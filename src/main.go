@@ -1,11 +1,11 @@
 package main
 
 import (
-	"./controllers"
 	"./controllers/v1"
 	"./controllers/v2"
 	"./database"
 	"./middleware"
+	// routeList "./routers"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
@@ -42,7 +42,9 @@ func startApp() {
 	v1.V1UserControllerHandler(router)
 	v1.V1AuthenticationControllerHandler(router)
 	v2.V2UserControllerHandler(router)
-	controllers.UrlShrotenerControllerHandler(router)
+
+	// rtr := routeList.Router{}
+	// rtr.RouterHandler(router)
 
 	serverHost := os.Getenv("SERVER_ADDRESS")
 	serverPort := os.Getenv("SERVER_PORT")

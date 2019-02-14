@@ -14,16 +14,6 @@ type UrlShrotenerController struct {
 	urlShortService services.UrlShortService
 }
 
-func UrlShrotenerControllerHandler(router *gin.Engine) {
-	// router.GET(":shortcode", getUrlShortcode)
-	this := &UrlShrotenerController{}
-	group := router.Group("shorten")
-	group.POST("", this.ShortUrl)
-	group.GET(":shortcode", this.getUrlShortcode)
-	group.GET(":shortcode/stats", this.getUrlShortcodeStat)
-
-}
-
 func (controller *UrlShrotenerController) ShortUrl(context *gin.Context) {
 	reqData := objects.URLRequestShortRequest{}
 	
@@ -55,7 +45,7 @@ func (controller *UrlShrotenerController) ShortUrl(context *gin.Context) {
 	context.JSON(http.StatusOK, result)
 }
 
-func (controller *UrlShrotenerController) getUrlShortcode(context *gin.Context) {
+func (controller *UrlShrotenerController) GetUrlShortcode(context *gin.Context) {
 	reqData := context.Param("shortcode")
 	fmt.Println(reqData)
 	if "" == reqData {
@@ -68,7 +58,7 @@ func (controller *UrlShrotenerController) getUrlShortcode(context *gin.Context) 
 	context.JSON(http.StatusFound, result)
 }
 
-func (controller *UrlShrotenerController) getUrlShortcodeStat(context *gin.Context) {
+func (controller *UrlShrotenerController) GetUrlShortcodeStat(context *gin.Context) {
 	reqData := context.Param("shortcode")
 	fmt.Println(reqData)
 	if "" == reqData {

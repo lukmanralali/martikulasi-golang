@@ -1,19 +1,26 @@
 package services
+
 import (
 	"../helpers"
+	"../models"
 	"../objects"
 	"../repositories"
-	"../models"
 	"time"
 )
 
 type UrlShortService struct {
-	urlShortRepository repositories.UrlShortRepository
+	urlShortRepository repositories.UrlShortRepositoryInterface
 }
 
-func  (service *UrlShortService) MakeShortUrl(requestData objects.URLRequestShortRequest) (objects.URLRequestShortResponse){
+type UrlShortServiceInterface interface {
+	MakeShortUrl(requestData objects.URLRequestShortRequest) objects.URLRequestShortResponse
+	GetUrlShortUrl(shortCode string) models.UrlShortCode
+	GetUrlShortUrlStat(shortCode string) objects.ShortedUrlStatResponse
+}
+
+func (service *UrlShortService) MakeShortUrl(requestData objects.URLRequestShortRequest) objects.URLRequestShortResponse {
 	shortCode := helpers.BuildRandomString(6)
-	if requestData.ShortCode != ""{
+	if requestData.ShortCode != "" {
 		shortcodeDB := service.urlShortRepository.GetByShortcode(requestData.ShortCode)
 		if "" != shortcodeDB.Shortcode {
 			shortCode = "Already in Used"
@@ -21,7 +28,7 @@ func  (service *UrlShortService) MakeShortUrl(requestData objects.URLRequestShor
 	}
 	result := objects.URLRequestShortResponse{}
 	result.ShortCode = shortCode
-	
+
 	requestData.ShortCode = shortCode
 	if shortCode != "Already in Used" {
 		service.urlShortRepository.CreateShortcode(requestData)
@@ -29,15 +36,15 @@ func  (service *UrlShortService) MakeShortUrl(requestData objects.URLRequestShor
 	return result
 }
 
-func (service *UrlShortService) GetUrlShortUrl(shortCode string) (models.UrlShortCode){
+func (service *UrlShortService) GetUrlShortUrl(shortCode string) models.UrlShortCode {
 	shortCodeDB := service.urlShortRepository.GetByShortcode(shortCode)
 	shortCodeDB.LastUsedAt = time.Now()
 	shortCodeDB.Counter++
-	service.urlShortRepository.UpdateShortcodeData(shortCodeDB)
+	// service.urlShortRepository.UpdateShortcodeData(shortCodeDB)
 	return shortCodeDB
 }
 
-func (service *UrlShortService) GetUrlShortUrlStat(shortCode string) (objects.ShortedUrlStatResponse){
+func (service *UrlShortService) GetUrlShortUrlStat(shortCode string) objects.ShortedUrlStatResponse {
 	shortcodeDB := service.urlShortRepository.GetByShortcode(shortCode)
 	if "" == shortcodeDB.Shortcode {
 		return objects.ShortedUrlStatResponse{}
